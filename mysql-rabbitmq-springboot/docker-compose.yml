@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  my-mysql:
+    image: mysql:8.0.20
+    container_name: my-mysql
+    restart: always
+    environment:
+        MYSQL_USER: 'root'
+        MYSQL_ROOT_PASSWORD: '123123'
+    expose:
+        - "3306"
+    ports:
+      - 3306:3306
+  my-rabbit:
+    image: rabbitmq:3-management
+    container_name: my-rabbit
+    expose:
+      - "5672"
+      - "15672" 
+    ports:
+      - 5672:5672
+      - 15672:15672
+  produtos-service:
+    build: ./produtos-service
+    expose:
+        - "8080"
+    ports:
+      - 8080:8080
+    depends_on:
+        - my-mysql
+        - my-rabbit
+  notas-service:
+    build : ./notas-service
+    expose:
+        - "8081"
+    ports:
+      - 8081:8081
+    depends_on:
+        - my-mysql
+        - my-rabbit
